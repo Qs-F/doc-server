@@ -37,25 +37,21 @@ func main() {
 	}
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		wd, _ := os.Getwd()
-		if v, err := os.Stat(wd + "/" + r.URL.Path[1:]); err == nil && v.Mode().IsRegular() { // check whether requested file exist. DONOT change the order of if checks.
-			if strings.HasSuffix(r.URL.Path[1:], ".md") { // check whether is it requesting for markdown file.
-				f, err := ioutil.ReadFile(wd + "/" + r.URL.Path[1:])
-				if err != nil {
-					http.NotFound(w, r)
-					return
-				}
-				b := blackfriday.MarkdownCommon(f)
-				tmplen, err := template.New("tmpl").Parse(tmpl)
-				p := Page{
-					Title:   r.URL.Path[1:],
-					Content: string(b),
-				}
-				err = tmplen.Execute(w, p)
-				if err != nil {
-					http.NotFound(w, r)
-				}
-			} else {
-				http.ServeFile(w, r, r.URL.Path[1:])
+		if v, err := os.Stat(wd + "/" + r.URL.Path[1:]); err == nil && v.Mode().IsRegular() && strings.HasSuffix(r.URL.Path[1:], ".md") { // check whether requested file exist and it is md formatted file. DONOT change the order of if checks.
+			f, err := ioutil.ReadFile(wd + "/" + r.URL.Path[1:])
+			if err != nil {
+				http.NotFound(w, r)
+				return
+			}
+			b := blackfriday.MarkdownCommon(f)
+			tmplen, err := template.New("tmpl").Parse(tmpl)
+			p := Page{
+				Title:   r.URL.Path[1:],
+				Content: string(b),
+			}
+			err = tmplen.Execute(w, p)
+			if err != nil {
+				http.NotFound(w, r)
 			}
 		} else {
 			http.ServeFile(w, r, r.URL.Path[1:])
