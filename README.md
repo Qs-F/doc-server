@@ -2,10 +2,12 @@
 
 A server to serve documents.
 
-## lib/doc.go
+## installation
 
-Return markdown style file as converted html file.  
-Using current directory's md file.
+RUN
 
-Writing on spesificted directory without any markdown file.  
-converting md to html
+`go get github.com/Qs-F/doc-server`
+
+And, RUN
+
+`go install github.com/Qs-F/doc-server`
